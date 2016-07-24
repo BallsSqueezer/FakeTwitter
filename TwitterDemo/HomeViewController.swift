@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HomeViewController: UIViewController, NewTweetViewControllerDelegate {
+class HomeViewController: UIViewController, NewTweetViewControllerDelegate, TweetCellDelegate  {
     @IBOutlet weak var tableView: UITableView!
     
     var tweets: [Tweet]!
@@ -39,14 +39,29 @@ class HomeViewController: UIViewController, NewTweetViewControllerDelegate {
             let navigationController = segue.destinationViewController as! UINavigationController
             let newTweetViewController = navigationController.topViewController as! NewTweetViewController
             newTweetViewController.delegate = self
+        } else if segue.identifier == "tweetDetailSegue" {
+            let detailViewController = segue.destinationViewController as! TweetDetailViewController
+            if let indexPath = tableView.indexPathForSelectedRow {
+                detailViewController.tweet = tweets[indexPath.row]
+            }
         }
      }
     
-    //MARK: - NewTweetViewControllerDelegate
+    //MARK: - NewTweetViewControllerDelegate, TweetCellDelegate
     func newTweetViewController(newTweetViewController: NewTweetViewController, didPostNewTweet tweet: Tweet) {
         tweets.insert(tweet, atIndex: 0)
         tableView.reloadData()
     }
+//    
+//    func tweetCell(tweetCell: TweetCell, didUpdateFavoriteCount tweet: Tweet, atRow row: Int) {
+//        tweets[row] = tweet
+//        tableView.reloadData()
+//    }
+//    
+//    func tweetCell(tweetCell: TweetCell, didUpdateRetweetCount tweet: Tweet) {
+//        tweets.insert(tweet, atIndex: 0)
+//        tableView.reloadData()
+//    }
     
     //MARK: - Helpers
     func getHomeTimeline() {
@@ -59,10 +74,14 @@ class HomeViewController: UIViewController, NewTweetViewControllerDelegate {
     }
     
     func refreshControlAction(refreshControl: UIRefreshControl) {
-        
         getHomeTimeline()
-        refreshControl.endRefreshing()
-        
+        refreshControl.endRefreshing()        
+    }
+    
+    //MARK: - Actions
+    
+    @IBAction func logoutButtonTapped(sender: AnyObject) {
+        TwitterClient.sharedInstance.logout()
     }
     
 }
@@ -79,8 +98,13 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate{
         let cell = tableView.dequeueReusableCellWithIdentifier("TweetCell", forIndexPath: indexPath) as! TweetCell
         
         cell.tweet = tweets[indexPath.row]
+        cell.indexPath = indexPath
         
         return cell
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
 }
 

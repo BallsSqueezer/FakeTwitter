@@ -18,11 +18,20 @@ class Tweet: NSObject {
     var retweetCount = 0
     var favCount = 0
     
+    var id: NSNumber?
+    var favorited = false
+    var retweeted = false
+    
+    var imageUrl: NSURL?
     
     init(dictionary: NSDictionary) {
         
         user = User(dictionary: dictionary["user"] as! NSDictionary)
         text = dictionary["text"] as? String
+        id = dictionary["id"] as? NSNumber
+        favorited = dictionary["favorited"] as! Bool
+        retweeted = dictionary["retweeted"] as! Bool
+        
         
         retweetCount = (dictionary["retweet_count"] as? Int) ?? 0
         favCount = (dictionary["favorite_count"] as? Int) ?? 0
@@ -45,6 +54,13 @@ class Tweet: NSObject {
             timeSinceCreated = String(Int(elapsedTime / 60 / 60 / 24)) + "d"
         }
         
+        //         
+        if let media = dictionary["extended_entities"]?["media"] as? [NSDictionary] {
+            //print("Media: \(media)")
+            if let urlString = media[0]["media_url_https"] as? String {
+                imageUrl = NSURL(string: urlString)
+            }
+        }
     }
     
     class func tweetsWithArray(dictionaries: [NSDictionary]) -> [Tweet] {

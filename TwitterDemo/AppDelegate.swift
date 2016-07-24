@@ -16,6 +16,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        if User.currentUser != nil {
+            //go straight to the homescreen instead of the login screen
+            print("There is a current user")
+            
+            let mystoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let viewController = mystoryboard.instantiateViewControllerWithIdentifier("HomeNavigationController")
+            window?.rootViewController = viewController
+        } else {
+            print("There is no current user")
+        }
+        
+        
+        //handle when user press log out button
+        NSNotificationCenter.defaultCenter().addObserverForName(User.userDidLogoutNotification, object: nil, queue: NSOperationQueue.mainQueue()) { (NSNotification) in
+            let mystoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let viewController = mystoryboard.instantiateInitialViewController()
+            self.window?.rootViewController = viewController
+        }
         
         return true
     }

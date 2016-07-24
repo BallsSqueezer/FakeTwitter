@@ -42,16 +42,12 @@ class NewTweetViewController: UIViewController {
             
             //get new tweet back from the server
             self.tweet = Tweet(dictionary: dictionary)
-            print("-------------------------------\n\(dictionary)\n-----------------------------------")
+            //print("-------------------------------\n\(dictionary)\n-----------------------------------")
             self.delegate?.newTweetViewController!(self, didPostNewTweet: self.tweet)
             self.dismissViewControllerAnimated(true, completion: nil)
             }, failure: { (error: NSError) in
                 print(error.localizedDescription)
         })
-        
-        //delegate
-        //print(self.tweet)
-        
     }
     
     
