@@ -60,47 +60,59 @@ class TwitterClient: BDBOAuth1SessionManager {
     }
     
     //MARK: - Like/unlike a tweet
-    func likeATweet(id: NSNumber, success: NSDictionary -> (), failure:NSError -> ()) {
+    func likeATweet(id: NSNumber, success: AnyObject? -> (), failure:NSError -> ()) {
         var params = [String : AnyObject]()
         params["id"] = id
         POST(PublicApi.likeATweet, parameters: params, progress: nil, success: { (task: NSURLSessionDataTask, response: AnyObject?) in
-            let dictionary = response as! NSDictionary
-            success(dictionary)
+            success(response!)
         }) { (task: NSURLSessionDataTask?, error: NSError) in
             print(error.localizedDescription)
             failure(error)
         }
     }
 
-    func unlikeATweet(id: NSNumber, success: NSDictionary -> (), failure:NSError -> ()) {
+    func unlikeATweet(id: NSNumber, success: AnyObject? -> (), failure:NSError -> ()) {
         var params = [String : AnyObject]()
         params["id"] = id
         POST(PublicApi.unlikeATweet, parameters: params, progress: nil, success: { (task: NSURLSessionDataTask, response: AnyObject?) in
-            let dictionary = response as! NSDictionary
-            success (dictionary)
+            success(response!)
         }) { (task: NSURLSessionDataTask?, error: NSError) in
             print(error.localizedDescription)
             failure(error)
         }
     }
     
-    //MARK: - Like/unlike a tweet
-    func retweet(id: NSNumber, success: NSDictionary -> (), failure: NSError -> ()){
+    //MARK: - Retweet/un-retweet
+    func retweet(id: NSNumber, success: AnyObject? -> (), failure: NSError -> ()){
         POST("1.1/statuses/retweet/\(id).json", parameters: nil, progress: nil, success: { (task: NSURLSessionDataTask, response: AnyObject?) in
-            let dictionary = response as! NSDictionary
-            success (dictionary)
+            success (response!)
         }) { (task: NSURLSessionDataTask?, error: NSError) in
             print(error.localizedDescription)
             failure(error)
         }
     }
     
-    func unRetweet(id: NSNumber, success: NSDictionary -> (), failure:NSError -> ()){
+    func unRetweet(id: NSNumber, success: AnyObject? -> (), failure: NSError -> ()){
         POST("1.1/statuses/unretweet/\(id).json", parameters: nil, progress: nil, success: { (task: NSURLSessionDataTask, response: AnyObject?) in
-            let dictionary = response as! NSDictionary
-            success (dictionary)
+            success (response!)
         }) { (task: NSURLSessionDataTask?, error: NSError) in
             print(error.localizedDescription)
+            failure(error)
+        }
+    }
+    
+    // Get  retweet ID
+    func getRetweetedId(id: NSNumber, success: AnyObject? -> (), failure:(NSError) -> ()) {
+        
+        var params = [String : AnyObject]()
+        params["include_my_retweet"] = true
+        GET("1.1/statuses/show/\(id).json", parameters: params, progress: nil, success: { (task:NSURLSessionDataTask, response: AnyObject?) in
+            let tweet = response as! NSDictionary
+            let currentUserRetweet = tweet["current_user_retweet"] as! NSDictionary
+            let retweetedId = currentUserRetweet["id"] as? NSNumber
+            success(retweetedId)
+        }) { (task: NSURLSessionDataTask?, error: NSError) in
+            print(error)
             failure(error)
         }
     }

@@ -25,30 +25,6 @@ class TweetDetailCell: UITableViewCell {
             nameLabel.text = tweet.user?.name
             screenNameLabel.text = "@" + (tweet.user?.screenName)!
             contentLabel.text = tweet.text
-            /*
-            if tweet.retweetCount == 0 {
-                retweetCountLabel.hidden = true
-            } /*else if tweet.retweetCount > 10000{
-                 let displayedCount = tweet.retweetCount / 1000
-                 retweetCountLabel.hidden = false
-                 retweetCountLabel.text = String(format: "%.1fK", displayedCount)
-             }*/ else {
-                retweetCountLabel.hidden = false
-                retweetCountLabel.text = "\(tweet.retweetCount)"
-            }
-            
-            print("likes: \(tweet.favCount)")
-            if tweet.favCount == 0 {
-                likeCountLabel.hidden = true
-            } /*else if tweet.retweetCount > 10000{
-                 let displayedCount = tweet.favCount / 1000
-                 likeCountLabel.hidden = false
-                 likeCountLabel.text = String(format: "%.1fK", displayedCount)
-             } */else {
-                likeCountLabel.hidden = false
-                likeCountLabel.text = "\(tweet.favCount)"
-            }*/
-            
             
             if let profileImageUrl = tweet.user?.profileImageUrl {
                 profileImageView.setImageWithURL(profileImageUrl)

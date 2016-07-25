@@ -8,12 +8,6 @@
 
 import UIKit
 
-@objc protocol TweetCellDelegate {
-    optional func tweetCell(tweetCell: TweetCell, didUpdateFavoriteCount tweet: Tweet, atRow row: Int)
-    
-    optional func tweetCell(tweetCell: TweetCell, didUpdateRetweetCount tweet: Tweet)
-}
-
 class TweetCell: UITableViewCell {
     
     @IBOutlet weak var nameLabel: UILabel!
@@ -32,10 +26,6 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var likeCountLabel: UILabel!
     
-    weak var delegate: TweetCellDelegate?
-    
-    var indexPath: NSIndexPath!
-    
     var tweet: Tweet! {
         didSet{
             nameLabel.text = tweet.user?.name
@@ -43,7 +33,6 @@ class TweetCell: UITableViewCell {
             contentLabel.text = tweet.text
             timeStampLabel.text = tweet.timeSinceCreated
             
-            //print("retweet: \(tweet.retweetCount)")
             if tweet.retweetCount == 0 {
                 retweetCountLabel.hidden = true
             } else {
@@ -51,7 +40,6 @@ class TweetCell: UITableViewCell {
                 retweetCountLabel.text = "\(tweet.retweetCount)"
             }
             
-            //print("likes: \(tweet.favCount)")
             if tweet.favCount == 0 {
                 likeCountLabel.hidden = true
             } else {
@@ -101,24 +89,37 @@ class TweetCell: UITableViewCell {
         //if this tweet is already tweeted
         if tweet.retweeted {
             //then unretweet it
-            retweetButton.setImage(UIImage(named: "retweet-action"), forState: .Normal)
-            TwitterClient.sharedInstance.unRetweet(tweet.id!, success: { (dictionary: NSDictionary) in
-                print("I just un-retweet")
-                self.tweet = Tweet(dictionary: dictionary)
-                //self.delegate?.tweetCell!(self, didUpdateRetweetCount: self.tweet)
-                }, failure: { (error: NSError) in
+            TwitterClient.sharedInstance.getRetweetedId(tweet.id!, success: { retweetedId in
+                if let id = retweetedId {
+                    TwitterClient.sharedInstance.retweet(id as! NSNumber, success: { response in
+                        if response != nil {
+                            print("I just un-retweet")
+                        }
+                        }, failure: { error in
+                            print(error.localizedDescription)
+                    })
+                }
+                }, failure: { error in
                     print(error.localizedDescription)
             })
+            self.tweet.retweetCount -= 1
+            self.retweetCountLabel.text =  "\(self.tweet.retweetCount)"
+            self.tweet.retweeted = false
+            updateReTweetButton()
         } else {
             //otherwise retweet it
             retweetButton.setImage(UIImage(named: "retweet-action-on"), forState: .Normal)
-            TwitterClient.sharedInstance.retweet(tweet.id!, success: { (dictionary: NSDictionary) in
-                print("I just retweet")
-                self.tweet = Tweet(dictionary: dictionary)
-                //self.delegate?.tweetCell!(self, didUpdateRetweetCount: self.tweet)
+            TwitterClient.sharedInstance.retweet(tweet.id!, success: { response in
+                if response != nil {
+                    print("I just retweet")
+                }
                 }, failure: { (error: NSError) in
                     print(error.localizedDescription)
             })
+            self.tweet.retweetCount += 1
+            self.retweetCountLabel.text =  "\(self.tweet.retweetCount)"
+            self.tweet.retweeted = true
+            updateReTweetButton()
         }
     }
     
@@ -126,25 +127,51 @@ class TweetCell: UITableViewCell {
         //if this tweet is already liked
         if tweet.favorited {
             //then unlike it
-            //likeButton.setImage(UIImage(named: "like-action"), forState: .Normal)
-            TwitterClient.sharedInstance.unlikeATweet(tweet.id!, success: { (dictionary: NSDictionary) in
-                print("I just unlike a tweet")
-                self.tweet = Tweet(dictionary: dictionary)
-                //self.delegate?.tweetCell!(self, didUpdateFavoriteCount: self.tweet, atRow: self.indexPath.row)
-            }, failure: { (error: NSError) in
+            TwitterClient.sharedInstance.unlikeATweet(tweet.id!, success: { (response: AnyObject?) in
+                if response != nil {
+                    print("I just unlike a tweet")
+                }
+                }, failure: { (error: NSError) in
                     print(error.localizedDescription)
             })
+            self.tweet.favCount -= 1
+            self.likeCountLabel.text = "\(self.tweet.favCount)"
+            self.tweet.favorited = false
+            updateLikeButton()
         } else {
             //otherwise like it
-            //likeButton.setImage(UIImage(named: "like-action-on"), forState: .Normal)
-            TwitterClient.sharedInstance.likeATweet(tweet.id!, success: { (dictionary: NSDictionary) in
-                print("I just like a tweet")
-                self.tweet = Tweet(dictionary: dictionary)
-                //self.delegate?.tweetCell!(self, didUpdateFavoriteCount: self.tweet, atRow: self.indexPath.row)
-            }) { (error: NSError) in
-                print(error.localizedDescription)
-            }
+            TwitterClient.sharedInstance.likeATweet(tweet.id!, success: { (response: AnyObject?) in
+                if response != nil {
+                    print("I just like a tweet")
+                }
+                }, failure: { (error: NSError) in
+                    print(error.localizedDescription)
+            })
+            self.tweet.favCount += 1
+            self.likeCountLabel.text = "\(self.tweet.favCount)"
+            self.tweet.favorited = true
+            updateLikeButton()
         }
-        
     }
+    
+    
+    //MARK: - Helpers
+    func updateLikeButton(){
+        let imageName = tweet.favorited ? "like-action-on" : "like-action"
+        likeButton.setImage(UIImage(named: imageName), forState: .Normal)
+        likeButton.alpha = 0.0
+        
+        UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 0.9, initialSpringVelocity: 0.5, options: [], animations: {
+            self.likeButton.alpha = 1.0
+            }, completion: nil)
+    }
+    
+    func updateReTweetButton() {
+        let imageName = tweet.retweeted ? "retweet-action-on" : "retweet-action"
+        retweetButton.setImage(UIImage(named: imageName), forState: .Normal)
+        retweetButton.alpha = 0.0
+        
+        UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 0.9, initialSpringVelocity: 0.5, options: [], animations: {
+            self.retweetButton.alpha = 1.0
+            }, completion: nil)    }
 }

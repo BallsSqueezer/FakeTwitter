@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HomeViewController: UIViewController, NewTweetViewControllerDelegate, TweetCellDelegate  {
+class HomeViewController: UIViewController, NewTweetViewControllerDelegate, TweetDetailViewControllerDelegate{
     @IBOutlet weak var tableView: UITableView!
     
     var tweets: [Tweet]!
@@ -35,33 +35,32 @@ class HomeViewController: UIViewController, NewTweetViewControllerDelegate, Twee
     
      // MARK: - Navigation
      override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        let navigationController = segue.destinationViewController as! UINavigationController
+        
         if segue.identifier == "newTweetSegue"{
-            let navigationController = segue.destinationViewController as! UINavigationController
             let newTweetViewController = navigationController.topViewController as! NewTweetViewController
             newTweetViewController.delegate = self
         } else if segue.identifier == "tweetDetailSegue" {
-            let detailViewController = segue.destinationViewController as! TweetDetailViewController
-            if let indexPath = tableView.indexPathForSelectedRow {
+            let detailViewController = navigationController.topViewController as! TweetDetailViewController
+            detailViewController.delegate = self
+            let cell = sender as! UITableViewCell
+            if let indexPath = tableView.indexPathForCell(cell) {
                 detailViewController.tweet = tweets[indexPath.row]
+                detailViewController.indexPath = indexPath
             }
         }
      }
     
-    //MARK: - NewTweetViewControllerDelegate, TweetCellDelegate
+    //MARK: - NewTweetViewControllerDelegate, TweetDetailViewControllerDelegate
     func newTweetViewController(newTweetViewController: NewTweetViewController, didPostNewTweet tweet: Tweet) {
         tweets.insert(tweet, atIndex: 0)
         tableView.reloadData()
     }
-//    
-//    func tweetCell(tweetCell: TweetCell, didUpdateFavoriteCount tweet: Tweet, atRow row: Int) {
-//        tweets[row] = tweet
-//        tableView.reloadData()
-//    }
-//    
-//    func tweetCell(tweetCell: TweetCell, didUpdateRetweetCount tweet: Tweet) {
-//        tweets.insert(tweet, atIndex: 0)
-//        tableView.reloadData()
-//    }
+    
+    func tweetDetailViewController(tweetDetailViewController: TweetDetailViewController, didUpdateTweet tweet: Tweet, atIndexPath indexPath: NSIndexPath?, withReplyTweet replyTweet: Tweet?) {
+        self.tweets[(indexPath?.row)!] = tweet
+        tableView.reloadData()
+    }
     
     //MARK: - Helpers
     func getHomeTimeline() {
@@ -96,9 +95,7 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate{
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("TweetCell", forIndexPath: indexPath) as! TweetCell
-        
         cell.tweet = tweets[indexPath.row]
-        cell.indexPath = indexPath
         
         return cell
     }
