@@ -22,7 +22,7 @@ class Tweet: NSObject {
     var favorited = false
     var retweeted = false
     
-    var imageUrl: NSURL?
+    var imageUrlString = ""
     
     init(dictionary: NSDictionary) {
         
@@ -54,13 +54,12 @@ class Tweet: NSObject {
             timeSinceCreated = String(Int(elapsedTime / 60 / 60 / 24)) + "d"
         }
         
-        //         
-        if let media = dictionary["extended_entities"]?["media"] as? [NSDictionary] {
-            //print("Media: \(media)")
+        //
+        if let media = dictionary.valueForKeyPath("extended_entities.media") as? [NSDictionary] {
             if let urlString = media[0]["media_url_https"] as? String {
-                imageUrl = NSURL(string: urlString)
+                imageUrlString = urlString
             }
-        }
+        } 
     }
     
     class func tweetsWithArray(dictionaries: [NSDictionary]) -> [Tweet] {

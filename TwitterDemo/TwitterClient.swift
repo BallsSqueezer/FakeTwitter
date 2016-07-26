@@ -16,8 +16,14 @@ class TwitterClient: BDBOAuth1SessionManager {
     static let sharedInstance = TwitterClient(baseURL: NSURL(string: "https://api.twitter.com"), consumerKey: "HfvLpXFzLW03rfgmYtN8aYBzd", consumerSecret: "7WxVtEVOoAT9ABwJQtNVvgOZTUVLQB8FJ1g85lZLARHQNPMFFX")
     
     //MARK: - Get home timeline
-    func homeTimeline(success: [Tweet] -> (), failure: NSError -> ()){
-        GET(PublicApi.getHomeTimeline, parameters: nil, progress: nil, success: { (task: NSURLSessionDataTask, response: AnyObject?) in
+    func homeTimeline(maxId: NSNumber?, success: [Tweet] -> (), failure: NSError -> ()){
+        var parameters = [String : AnyObject]()
+        
+        if let id = maxId {
+            parameters["max_id"] = id
+        }
+
+        GET(PublicApi.getHomeTimeline, parameters: parameters , progress: nil, success: { (task: NSURLSessionDataTask, response: AnyObject?) in
             let dictionaries = response as! [NSDictionary]
             let tweets = Tweet.tweetsWithArray(dictionaries)
             
@@ -55,9 +61,25 @@ class TwitterClient: BDBOAuth1SessionManager {
                 print(error.localizedDescription)
                 failure(error)
         })
-        
-        
     }
+    
+    //MARK: - Reply a Tweet
+    func replyATweet(text: String, originalId: NSNumber, success: Tweet -> (), failure:(NSError) -> ()) {
+        
+        var parameters = [String : AnyObject]()
+        parameters["status"] = text
+        parameters["in_reply_to_status_id"] = originalId
+        POST(PublicApi.postStatusUpdate, parameters: parameters, progress: nil, success: { (task: NSURLSessionDataTask, response: AnyObject?) in
+            print("I can reply to a tweet now. Yay")
+            let dictionary = response as! NSDictionary
+            let tweet = Tweet(dictionary: dictionary)
+            success(tweet)
+        }) { (task: NSURLSessionDataTask?, error: NSError) in
+            print(error.localizedDescription)
+            failure(error)
+        }
+    }
+
     
     //MARK: - Like/unlike a tweet
     func likeATweet(id: NSNumber, success: AnyObject? -> (), failure:NSError -> ()) {
@@ -169,7 +191,7 @@ class TwitterClient: BDBOAuth1SessionManager {
     struct PublicApi {
         static let getHomeTimeline = "1.1/statuses/home_timeline.json"
         static let getAccountVerifyCredential = "1.1/account/verify_credentials.json"
-        static let postStatusUpdate = "1.1/statuses/update.json"
+        static let postStatusUpdate = "1.1/statuses/update.json"  //this is use for reply a tweet too
         static let likeATweet = "1.1/favorites/create.json"
         static let unlikeATweet = "1.1/favorites/destroy.json"
     }

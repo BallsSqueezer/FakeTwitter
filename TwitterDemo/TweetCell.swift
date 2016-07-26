@@ -26,6 +26,9 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var likeCountLabel: UILabel!
     
+    @IBOutlet weak var tweetImageView: UIImageView!
+    @IBOutlet weak var imageViewHeightConstaint: NSLayoutConstraint!
+    
     var tweet: Tweet! {
         didSet{
             nameLabel.text = tweet.user?.name
@@ -67,6 +70,31 @@ class TweetCell: UITableViewCell {
                 retweetButton.setImage(UIImage(named: "retweet-action-on"), forState: .Normal)
             } else {
                 retweetButton.setImage(UIImage(named: "retweet-action"), forState: .Normal)
+            }
+            
+            //if the image exists :D
+            if tweet.imageUrlString != "" {
+                imageViewHeightConstaint.constant = 200
+                tweetImageView.hidden = false
+                let imageRequest = NSURLRequest(URL: NSURL(string: tweet.imageUrlString)!)
+                tweetImageView.setImageWithURLRequest(imageRequest, placeholderImage: UIImage(named: "noPhoto"), success: { (imageRequest, imageResponse, image) -> Void in
+                    
+                        if imageResponse != nil {
+                            self.tweetImageView.alpha = 0.0
+                            self.tweetImageView.image = image
+                            UIView.animateWithDuration(0.5, animations: { () -> Void in
+                                self.tweetImageView.alpha = 1.0
+                            })
+                        } else {
+                            self.tweetImageView.image = image
+                        }
+                    },
+                    failure: { (imageRequest, imageResponse, error) -> Void in
+                        print(error.localizedDescription)
+                })
+            } else { //if image doesn;t exist then hide it
+                imageViewHeightConstaint.constant = 0
+                tweetImageView.hidden = true
             }
         }
     }

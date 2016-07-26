@@ -9,7 +9,7 @@
 import UIKit
 
 protocol TweetDetailViewControllerDelegate: class {
-    func tweetDetailViewController(tweetDetailViewController: TweetDetailViewController, didUpdateTweet tweet: Tweet, atIndexPath indexPath: NSIndexPath?, withReplyTweet replyTweet: Tweet?)
+    func tweetDetailViewController(tweetDetailViewController: TweetDetailViewController, didUpdateTweet tweet: Tweet, atIndexPath indexPath: NSIndexPath)
 }
 
 class TweetDetailViewController: UIViewController {
@@ -37,6 +37,9 @@ class TweetDetailViewController: UIViewController {
     
     @IBOutlet weak var backBarButton: UIBarButtonItem!
     
+    @IBOutlet weak var tweetImageViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var tweetImageView: UIImageView!
+    
     var tweet: Tweet!
     
     weak var delegate: TweetDetailViewControllerDelegate?
@@ -53,7 +56,7 @@ class TweetDetailViewController: UIViewController {
 
     //MARK: - Actions
     @IBAction func backBarButtonTapped(sender: UIBarButtonItem) {
-        delegate?.tweetDetailViewController(self, didUpdateTweet: tweet, atIndexPath: indexPath, withReplyTweet: nil)
+        delegate?.tweetDetailViewController(self, didUpdateTweet: tweet, atIndexPath: indexPath)
         dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -129,6 +132,16 @@ class TweetDetailViewController: UIViewController {
         }
     }
     
+    //MARK: - Navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "replyTweetSegue" {
+            let navigationController = segue.destinationViewController as! UINavigationController
+            let replyTweetViewController = navigationController.topViewController as! NewTweetViewController
+            replyTweetViewController.tweet = tweet
+            replyTweetViewController.isNewTweet = false
+        }
+    }
+    
     //MARK: - Helpers
     func setUpContent() {
         nameLabel.text = tweet.user?.name
@@ -151,17 +164,35 @@ class TweetDetailViewController: UIViewController {
         likesCountLabel.text = "\(tweet.favCount)"
         
         //set color for like button
-        if tweet.favorited{
-            likeButton.setImage(UIImage(named: "like-action-on"), forState: .Normal)
-        } else {
-            likeButton.setImage(UIImage(named: "like-action"), forState: .Normal)
-        }
+        let likeImageName = tweet.favorited ? "like-action-on" : "like-action"
+        likeButton.setImage(UIImage(named: likeImageName), forState: .Normal)
         
         //set color for retweet button
-        if tweet.retweeted{
-            retweetButton.setImage(UIImage(named: "retweet-action-on"), forState: .Normal)
-        } else {
-            retweetButton.setImage(UIImage(named: "retweet-action"), forState: .Normal)
+        let retweetImageName = tweet.retweeted ? "retweet-action-on" : "retweet-action"
+        retweetButton.setImage(UIImage(named: retweetImageName), forState: .Normal)
+        
+        //if the image exists :D
+        if tweet.imageUrlString != "" {
+            tweetImageViewHeightConstraint.constant = 200
+            tweetImageView.hidden = false
+            let imageRequest = NSURLRequest(URL: NSURL(string: tweet.imageUrlString)!)
+            tweetImageView.setImageWithURLRequest(imageRequest, placeholderImage: UIImage(named: "noPhoto"), success: { (imageRequest, imageResponse, image) -> Void in
+                
+                if imageResponse != nil {
+                    self.tweetImageView.alpha = 0.0
+                    self.tweetImageView.image = image
+                    UIView.animateWithDuration(0.5, animations: { () -> Void in
+                        self.tweetImageView.alpha = 1.0
+                    })
+                } else {
+                    self.tweetImageView.image = image
+                }
+            },failure: { (imageRequest, imageResponse, error) -> Void in
+                        print(error.localizedDescription)
+            })
+        } else { //if image doesn't exist then hide it
+            tweetImageViewHeightConstraint.constant = 0
+            tweetImageView.hidden = true
         }
     }
 

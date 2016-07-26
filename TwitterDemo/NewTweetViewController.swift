@@ -9,21 +9,49 @@
 import UIKit
 
 @objc protocol NewTweetViewControllerDelegate{
-    optional func newTweetViewController(newTweetViewController: NewTweetViewController, didPostNewTweet tweet: Tweet)
+    optional func newTweetViewController(newTweetViewController: NewTweetViewController, didPostOrReplyTweet tweet: Tweet)
     
 }
 
 class NewTweetViewController: UIViewController {
+    
+    @IBOutlet weak var profileImageView: UIImageView!
+    
+    @IBOutlet weak var screenNameLabel: UILabel!
+    
+    @IBOutlet weak var replyToLabel: UILabel!
+    @IBOutlet weak var replyButtonJustForShow: UIButton!
+    
+    @IBOutlet weak var limitCharatersLabel: UILabel!
+    
     @IBOutlet weak var tweetTextView: UITextView!
     
     var tweet: Tweet!
+    
+    var textViewPlaceHolder: String!
+    
+    var isNewTweet = true {
+        didSet {
+            if let screenName = tweet.user?.screenName {
+                textViewPlaceHolder = isNewTweet ? "" : "@" + screenName + " "
+            }
+        }
+    }
+    
+    var limitCharaters = 140
     
     weak var delegate: NewTweetViewControllerDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        tweetTextView.becomeFirstResponder()
+        tweetTextView.text = textViewPlaceHolder
+        
+        //setup view for newtweet/reply tweet
+        setupView()
+        
+    
     }
 
     override func didReceiveMemoryWarning() {
@@ -31,35 +59,51 @@ class NewTweetViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    
+    
+    
+    //MARK: - Actions
     @IBAction func cancelTapped(sender: UIBarButtonItem) {
         dismissViewControllerAnimated(true, completion: nil)
     }
     
     @IBAction func tweetTapped(sender: UIBarButtonItem) {
-        
-        TwitterClient.sharedInstance.postStatusUpdate(tweetTextView.text, success: {(dictionary: NSDictionary) in
-            print("Finally I have my post printed on the god damn wall")
+        if isNewTweet {
+            TwitterClient.sharedInstance.postStatusUpdate(tweetTextView.text, success: {(dictionary: NSDictionary) in
+                print("Finally I have managed to post on the god damn wall")
             
-            //get new tweet back from the server
-            self.tweet = Tweet(dictionary: dictionary)
-            //print("-------------------------------\n\(dictionary)\n-----------------------------------")
-            self.delegate?.newTweetViewController!(self, didPostNewTweet: self.tweet)
-            self.dismissViewControllerAnimated(true, completion: nil)
+                //get new tweet back from the server
+                self.tweet = Tweet(dictionary: dictionary)
+                //print("-------------------------------\n\(dictionary)\n-----------------------------------")
+                self.delegate?.newTweetViewController!(self, didPostOrReplyTweet: self.tweet)
+                self.dismissViewControllerAnimated(true, completion: nil)
             }, failure: { (error: NSError) in
                 print(error.localizedDescription)
-        })
+            })
+        } else {
+            TwitterClient.sharedInstance.replyATweet(tweetTextView.text, originalId: tweet.id!, success: { (tweet: Tweet) in
+                self.tweet = tweet
+                self.delegate?.newTweetViewController!(self, didPostOrReplyTweet: self.tweet)
+                self.dismissViewControllerAnimated(true, completion: nil)
+                }, failure: { (error: NSError) in
+                    print(error.localizedDescription)
+            })
+            
+        }
     }
-    
-    
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    //MARK: - Helpers
+    func setupView() {
+        if isNewTweet {
+            replyToLabel.hidden = true
+            replyButtonJustForShow.hidden = true
+        } else {
+            if let screenName = tweet.user?.screenName {
+                replyToLabel.text = "Reply to @" + screenName
+            }
+        }
+        
+        limitCharatersLabel.text = "\(limitCharaters)"
     }
-    */
 
 }

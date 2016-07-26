@@ -13,6 +13,9 @@ class HomeViewController: UIViewController, NewTweetViewControllerDelegate, Twee
     
     var tweets: [Tweet]!
     
+    var isMoreDataLoading = false
+    var loadingMoreView: InfiniteScrollActivityView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -40,6 +43,7 @@ class HomeViewController: UIViewController, NewTweetViewControllerDelegate, Twee
         if segue.identifier == "newTweetSegue"{
             let newTweetViewController = navigationController.topViewController as! NewTweetViewController
             newTweetViewController.delegate = self
+            newTweetViewController.isNewTweet = true
         } else if segue.identifier == "tweetDetailSegue" {
             let detailViewController = navigationController.topViewController as! TweetDetailViewController
             detailViewController.delegate = self
@@ -52,29 +56,56 @@ class HomeViewController: UIViewController, NewTweetViewControllerDelegate, Twee
      }
     
     //MARK: - NewTweetViewControllerDelegate, TweetDetailViewControllerDelegate
-    func newTweetViewController(newTweetViewController: NewTweetViewController, didPostNewTweet tweet: Tweet) {
+    func newTweetViewController(newTweetViewController: NewTweetViewController, didPostOrReplyTweet tweet: Tweet) {
         tweets.insert(tweet, atIndex: 0)
         tableView.reloadData()
     }
     
-    func tweetDetailViewController(tweetDetailViewController: TweetDetailViewController, didUpdateTweet tweet: Tweet, atIndexPath indexPath: NSIndexPath?, withReplyTweet replyTweet: Tweet?) {
-        self.tweets[(indexPath?.row)!] = tweet
+    func tweetDetailViewController(tweetDetailViewController: TweetDetailViewController, didUpdateTweet tweet: Tweet, atIndexPath indexPath: NSIndexPath) {
+        self.tweets[indexPath.row] = tweet
         tableView.reloadData()
     }
     
     //MARK: - Helpers
     func getHomeTimeline() {
-        TwitterClient.sharedInstance.homeTimeline({ (tweets: [Tweet]) in
+        TwitterClient.sharedInstance.homeTimeline(nil, success: { (tweets: [Tweet]) in
             self.tweets = tweets
             self.tableView.reloadData()
         }) { (error: NSError) in
-            print(error.localizedDescription)
+                 print(error.localizedDescription)
         }
     }
     
     func refreshControlAction(refreshControl: UIRefreshControl) {
         getHomeTimeline()
         refreshControl.endRefreshing()        
+    }
+    
+    func loadMoreData() {
+        if let noNiTweets = tweets {
+            let maxId = noNiTweets.last?.id
+            TwitterClient.sharedInstance.homeTimeline(maxId, success: { (tweets: [Tweet]) in
+                self.tweets.appendContentsOf(tweets)
+                self.tableView.reloadData()
+                self.isMoreDataLoading = false
+                self.loadingMoreView?.stopAnimating()
+                }, failure: { (error: NSError) in
+                    print(error.localizedDescription)
+            })
+        }
+        
+    }
+    
+    func setupLoadingIndicator() {
+        // Set up Infinite Scroll loading indicator
+        let frame = CGRectMake(0, tableView.contentSize.height, tableView.bounds.size.width, InfiniteScrollActivityView.defaultHeight)
+        loadingMoreView = InfiniteScrollActivityView(frame: frame)
+        loadingMoreView!.hidden = true
+        tableView.addSubview(loadingMoreView!)
+        
+        var insets = tableView.contentInset;
+        insets.bottom += InfiniteScrollActivityView.defaultHeight;
+        tableView.contentInset = insets
     }
     
     //MARK: - Actions
@@ -102,6 +133,29 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate{
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
+    }
+}
+
+extension HomeViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        if (!isMoreDataLoading){
+            // Calculate the position of scrollview where the date shoule start loading
+            let scrollViewContentHeight = tableView.contentSize.height
+            let scrollViewOffsetThreshold = scrollViewContentHeight - tableView.bounds.size.height
+            
+            if scrollView.contentOffset.y > scrollViewOffsetThreshold && tableView.dragging{
+                isMoreDataLoading = true
+                
+                // Update position of loadingMoreView, and start loading indicator
+                let frame = CGRectMake(0, tableView.contentSize.height, tableView.bounds.size.width, InfiniteScrollActivityView.defaultHeight)
+                if loadingMoreView != nil {
+                    loadingMoreView?.frame = frame
+                    loadingMoreView!.startAnimating()
+                }
+                //load more results
+                loadMoreData()
+            }
+        }
     }
 }
 

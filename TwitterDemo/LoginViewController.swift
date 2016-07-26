@@ -12,10 +12,14 @@ import BDBOAuth1Manager
 
 class LoginViewController: UIViewController {
     
+    @IBOutlet weak var loginButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
+        gradientForButton(loginButton)
+        loginButton.layer.cornerRadius = loginButton.frame.height / 2
+        loginButton.layer.masksToBounds = true
     }
     
     override func didReceiveMemoryWarning() {
