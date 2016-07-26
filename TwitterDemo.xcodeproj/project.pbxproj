@@ -20,8 +20,6 @@
 		218522481D4744D400C44E88 /* InfiniteScrollActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218522471D4744D400C44E88 /* InfiniteScrollActivityView.swift */; };
 		2185224A1D4754E900C44E88 /* AppUltility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218522491D4754E900C44E88 /* AppUltility.swift */; };
 		21F923981D44AC6D002DB93C /* TweetDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F923971D44AC6D002DB93C /* TweetDetailViewController.swift */; };
-		21F9239A1D44AC8D002DB93C /* TweetDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F923991D44AC8D002DB93C /* TweetDetailCell.swift */; };
-		21F9239C1D44BF34002DB93C /* RetweetLikeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F9239B1D44BF34002DB93C /* RetweetLikeCell.swift */; };
 		21F9E5211D431F410090DA50 /* TweetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F9E5201D431F410090DA50 /* TweetCell.swift */; };
 		21F9E5231D43392C0090DA50 /* NewTweetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F9E5221D43392C0090DA50 /* NewTweetViewController.swift */; };
 		4B19E246BD8BD2452D7B50C9 /* Pods_TwitterDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DA911F484A6F55EBD31D17B /* Pods_TwitterDemo.framework */; };
@@ -43,8 +41,6 @@
 		218522471D4744D400C44E88 /* InfiniteScrollActivityView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfiniteScrollActivityView.swift; sourceTree = "<group>"; };
 		218522491D4754E900C44E88 /* AppUltility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppUltility.swift; sourceTree = "<group>"; };
 		21F923971D44AC6D002DB93C /* TweetDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TweetDetailViewController.swift; sourceTree = "<group>"; };
-		21F923991D44AC8D002DB93C /* TweetDetailCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TweetDetailCell.swift; sourceTree = "<group>"; };
-		21F9239B1D44BF34002DB93C /* RetweetLikeCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RetweetLikeCell.swift; sourceTree = "<group>"; };
 		21F9E5201D431F410090DA50 /* TweetCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TweetCell.swift; sourceTree = "<group>"; };
 		21F9E5221D43392C0090DA50 /* NewTweetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewTweetViewController.swift; sourceTree = "<group>"; };
 		7DA911F484A6F55EBD31D17B /* Pods_TwitterDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TwitterDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,6 +81,8 @@
 		18EAAC821D3B66D500339F69 /* TwitterDemo */ = {
 			isa = PBXGroup;
 			children = (
+				2185224C1D4768E000C44E88 /* Helpers */,
+				2185224B1D4768C900C44E88 /* Cells */,
 				18EAAC9A1D3BE75E00339F69 /* ViewControllers */,
 				18EAAC991D3BE75800339F69 /* Models */,
 				18EAAC831D3B66D500339F69 /* AppDelegate.swift */,
@@ -112,13 +110,8 @@
 			children = (
 				18EAAC971D3B742E00339F69 /* HomeViewController.swift */,
 				18EAAC951D3B673C00339F69 /* LoginViewController.swift */,
-				21F9E5201D431F410090DA50 /* TweetCell.swift */,
 				21F9E5221D43392C0090DA50 /* NewTweetViewController.swift */,
 				21F923971D44AC6D002DB93C /* TweetDetailViewController.swift */,
-				21F923991D44AC8D002DB93C /* TweetDetailCell.swift */,
-				21F9239B1D44BF34002DB93C /* RetweetLikeCell.swift */,
-				218522471D4744D400C44E88 /* InfiniteScrollActivityView.swift */,
-				218522491D4754E900C44E88 /* AppUltility.swift */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -130,6 +123,23 @@
 				BB66B382004619DB20C05E52 /* Pods-TwitterDemo.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		2185224B1D4768C900C44E88 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				21F9E5201D431F410090DA50 /* TweetCell.swift */,
+			);
+			name = Cells;
+			sourceTree = "<group>";
+		};
+		2185224C1D4768E000C44E88 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				218522471D4744D400C44E88 /* InfiniteScrollActivityView.swift */,
+				218522491D4754E900C44E88 /* AppUltility.swift */,
+			);
+			name = Helpers;
 			sourceTree = "<group>";
 		};
 		84E1E67D6408AD4D6D23D7DE /* Frameworks */ = {
@@ -270,9 +280,7 @@
 				214840FD1D43F103003227A3 /* Requirements.swift in Sources */,
 				2185224A1D4754E900C44E88 /* AppUltility.swift in Sources */,
 				18EAAC9E1D3BEBA100339F69 /* Tweet.swift in Sources */,
-				21F9239C1D44BF34002DB93C /* RetweetLikeCell.swift in Sources */,
 				18EAAC961D3B673C00339F69 /* LoginViewController.swift in Sources */,
-				21F9239A1D44AC8D002DB93C /* TweetDetailCell.swift in Sources */,
 				18EAAC841D3B66D500339F69 /* AppDelegate.swift in Sources */,
 				2128E72C1D42A622009DCD29 /* TwitterClient.swift in Sources */,
 				18EAAC981D3B742E00339F69 /* HomeViewController.swift in Sources */,

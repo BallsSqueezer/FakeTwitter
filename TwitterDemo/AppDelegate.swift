@@ -35,6 +35,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.window?.rootViewController = viewController
         }
         
+        //UI 
+        //customize navigation bar
+        UINavigationBar.appearance().barTintColor = AppThemes.themeColor
+        UINavigationBar.appearance().tintColor = UIColor.whiteColor()
+        UINavigationBar.appearance().titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        
+        //customize the status bar
+        UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.LightContent
+
         return true
     }
     

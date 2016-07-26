@@ -30,13 +30,7 @@ class NewTweetViewController: UIViewController {
     
     var textViewPlaceHolder: String!
     
-    var isNewTweet = true {
-        didSet {
-            if let screenName = tweet.user?.screenName {
-                textViewPlaceHolder = isNewTweet ? "" : "@" + screenName + " "
-            }
-        }
-    }
+    var isNewTweet = true
     
     var limitCharaters = 140
     
@@ -44,14 +38,24 @@ class NewTweetViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        if tweet != nil {
+            if let screenName = tweet.user?.screenName {
+                textViewPlaceHolder = "@" + screenName + " "
+            }
+        }
+        
         tweetTextView.becomeFirstResponder()
         tweetTextView.text = textViewPlaceHolder
         
         //setup view for newtweet/reply tweet
         setupView()
         
-    
+        //set logo to the navigation bar
+        let logoImage = UIImage(named: "Twitter_logo_white")
+        let logoImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        logoImageView.image = logoImage
+        self.navigationItem.titleView = logoImageView
     }
 
     override func didReceiveMemoryWarning() {
@@ -103,7 +107,12 @@ class NewTweetViewController: UIViewController {
             }
         }
         
-        limitCharatersLabel.text = "\(limitCharaters)"
+        if let url = User.currentUser?.profileImageUrl {
+            profileImageView.setImageWithURL(url)
+        }
+        if let screenName = User.currentUser?.screenName {
+            screenNameLabel.text = "@" + screenName
+        }
     }
 
 }

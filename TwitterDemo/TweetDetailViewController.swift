@@ -50,6 +50,12 @@ class TweetDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //set logo to the navigation bar
+        let logoImage = UIImage(named: "Twitter_logo_white")
+        let logoImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        logoImageView.image = logoImage
+        self.navigationItem.titleView = logoImageView
+        
         setUpContent()
     }
     

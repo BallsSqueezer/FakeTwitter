@@ -385,6 +385,12 @@
                                             <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
                                                 <integer key="value" value="20"/>
                                             </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                                <integer key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
+                                                <color key="value" red="0.33333333333333331" green="0.67450980392156867" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
+                                            </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                         <connections>
                                             <outlet property="contentLabel" destination="0wD-lV-B1C" id="K9o-3C-q17"/>
@@ -416,6 +422,9 @@
                                         <integer key="value" value="30"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <segue destination="eNf-Lu-HDj" kind="presentation" identifier="newTweetSegue" id="vxq-O9-wdE"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -434,14 +443,10 @@
                                 <action selector="logoutButtonTapped:" destination="9Sh-4f-3XS" id="Cb5-YS-JtS"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Tweet" id="Dj9-ge-vbT">
-                            <connections>
-                                <segue destination="eNf-Lu-HDj" kind="presentation" identifier="newTweetSegue" id="0xS-LF-TPX"/>
-                            </connections>
-                        </barButtonItem>
                     </navigationItem>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
+                        <outlet property="newTweetFloatingButton" destination="WXd-KM-NBb" id="Xpt-OG-SiW"/>
                         <outlet property="tableView" destination="m9P-TR-elH" id="zCi-ll-wj4"/>
                     </connections>
                 </viewController>
@@ -614,6 +619,6 @@
         <image name="retweet-action" width="75" height="72"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="rea-2Q-MwA"/>
+        <segue reference="vxq-O9-wdE"/>
     </inferredMetricsTieBreakers>
 </document>

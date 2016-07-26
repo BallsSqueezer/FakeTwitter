@@ -9,6 +9,8 @@
 import UIKit
 
 class HomeViewController: UIViewController, NewTweetViewControllerDelegate, TweetDetailViewControllerDelegate{
+    @IBOutlet weak var newTweetFloatingButton: UIButton!
+    
     @IBOutlet weak var tableView: UITableView!
     
     var tweets: [Tweet]!
@@ -23,6 +25,15 @@ class HomeViewController: UIViewController, NewTweetViewControllerDelegate, Twee
         tableView.delegate = self
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
+        
+        //set logo to the navigation bar
+        let logoImage = UIImage(named: "Twitter_logo_white")
+        let logoImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        logoImageView.image = logoImage
+        self.navigationItem.titleView = logoImageView
+        
+        //gradient color for button
+        newTweetFloatingButton.layer.backgroundColor = AppThemes.themeColor.CGColor
         
         getHomeTimeline()
         
