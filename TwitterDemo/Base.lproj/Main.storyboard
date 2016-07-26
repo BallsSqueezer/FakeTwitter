@@ -502,16 +502,9 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="140" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ifz-mx-d4C">
-                                <rect key="frame" x="284" y="103" width="25.5" height="18"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="Ifz-mx-d4C" firstAttribute="centerY" secondItem="aCi-Dg-Gyu" secondAttribute="centerY" id="GLj-w6-YGY"/>
                             <constraint firstAttribute="trailing" secondItem="dAg-Xr-0Hl" secondAttribute="trailing" constant="15" id="H25-hj-oub"/>
                             <constraint firstItem="dAg-Xr-0Hl" firstAttribute="top" secondItem="y8w-K6-Y1N" secondAttribute="bottom" constant="8" id="Ilf-N1-gyG"/>
                             <constraint firstItem="nFn-9o-Zkb" firstAttribute="top" secondItem="3dc-pS-A5v" secondAttribute="bottom" constant="9" id="Jub-ed-Iho"/>
@@ -520,11 +513,10 @@
                             <constraint firstItem="aCi-Dg-Gyu" firstAttribute="centerY" secondItem="nFn-9o-Zkb" secondAttribute="centerY" id="VyP-2k-Vl7"/>
                             <constraint firstItem="nFn-9o-Zkb" firstAttribute="leading" secondItem="3dc-pS-A5v" secondAttribute="leading" id="ZP8-Oe-3l1"/>
                             <constraint firstItem="nOr-dF-Xl2" firstAttribute="top" secondItem="dAg-Xr-0Hl" secondAttribute="bottom" id="bNW-vl-5jw"/>
-                            <constraint firstAttribute="trailing" secondItem="Ifz-mx-d4C" secondAttribute="trailing" constant="10" id="gaE-Yf-7E4"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="aCi-Dg-Gyu" secondAttribute="trailing" constant="10" id="evO-rC-vXD"/>
                             <constraint firstItem="3dc-pS-A5v" firstAttribute="top" secondItem="y8w-K6-Y1N" secondAttribute="top" id="h4c-tT-xK6"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="3dc-pS-A5v" secondAttribute="trailing" constant="10" id="liu-DK-Sa1"/>
                             <constraint firstItem="aCi-Dg-Gyu" firstAttribute="leading" secondItem="nFn-9o-Zkb" secondAttribute="trailing" constant="5" id="lkL-M7-pZ4"/>
-                            <constraint firstItem="Ifz-mx-d4C" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="aCi-Dg-Gyu" secondAttribute="trailing" constant="10" id="p81-TB-aLZ"/>
                             <constraint firstItem="y8w-K6-Y1N" firstAttribute="leading" secondItem="1bK-aP-NFu" secondAttribute="leading" constant="15" id="x9W-l1-x7k"/>
                             <constraint firstItem="3dc-pS-A5v" firstAttribute="leading" secondItem="y8w-K6-Y1N" secondAttribute="trailing" constant="8" id="zLr-qr-fag"/>
                         </constraints>
@@ -543,7 +535,6 @@
                     </navigationItem>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
-                        <outlet property="limitCharatersLabel" destination="Ifz-mx-d4C" id="mH9-Xv-ETu"/>
                         <outlet property="profileImageView" destination="y8w-K6-Y1N" id="tQN-XQ-a5E"/>
                         <outlet property="replyButtonJustForShow" destination="nFn-9o-Zkb" id="Y9Y-mj-Hbk"/>
                         <outlet property="replyToLabel" destination="aCi-Dg-Gyu" id="gXs-vf-qdq"/>
